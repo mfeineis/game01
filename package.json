@@ -1,0 +1,31 @@
+{
+  "name": "game01",
+  "version": "0.1.0",
+  "description": "Yet another generic game",
+  "main": "js/main.js",
+  "scripts": {
+    "build": "npm run core:build && rollup --config rollup.config.js",
+    "build0": "elm make src/Main.elm --output=dist/core.js && cat dist/core.js js/adapter.js > dist/worker.js",
+    "clean": "rm -rf dist/ && rm -rf elm-stuff/",
+    "core:build": "elm make src/Game/Core.elm --output=dist/core.js",
+    "start": "http-server -p 8080 .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "rollup --config rollup.config.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mfeineis/game01.git"
+  },
+  "author": "Martin Feineis",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/mfeineis/game01/issues"
+  },
+  "homepage": "https://github.com/mfeineis/game01#readme",
+  "devDependencies": {
+    "elm": "^0.19.0",
+    "elm-format": "^0.8.1",
+    "http-server": "^0.11.1",
+    "rollup": "^0.67.3"
+  }
+}
