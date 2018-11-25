@@ -47,27 +47,28 @@ encode fact =
                 , ( "topic", Encode.string "system/INITIALIZED" )
                 ]
 
-        UnknownFact (DecodeFailed value)->
+        UnknownFact (DecodeFailed value) ->
             Encode.object
-                [ ( "topic", Encode.string ("system/DECODE_FAILED") )
+                [ ( "topic", Encode.string "system/DECODE_FAILED" )
                 , ( "meta"
                   , Encode.object
-                      [ ( "kind", system )
-                      ]
+                        [ ( "kind", system )
+                        ]
                   )
                 , ( "data", value )
                 ]
 
-        UnknownFact (UnknownTopic topic)->
+        UnknownFact (UnknownTopic topic) ->
             Encode.object
-                [ ( "topic", Encode.string ("system/UNKOWN_FACT_RECEIVED") )
+                [ ( "topic", Encode.string "system/UNKOWN_FACT_RECEIVED" )
                 , ( "meta"
                   , Encode.object
-                      [ ( "kind", system )
-                      ]
+                        [ ( "kind", system )
+                        ]
                   )
                 , ( "data", Encode.string topic )
                 ]
+
 
 
 -- Helpers

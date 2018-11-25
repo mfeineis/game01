@@ -1,7 +1,4 @@
-module Game.Core.Intents exposing
-    ( Intent(..)
-    , decode
-    )
+module Game.Core.Intents exposing (Intent(..), decode, decodeString, encode)
 
 import Json.Decode as Decode exposing (Decoder, Value)
 import Json.Encode as Encode
@@ -9,7 +6,12 @@ import Json.Encode as Encode
 
 type Intent
     = RootClick
-    | UnknownIntent
+    | UnknownIntent UnknownCause
+
+
+type UnknownCause
+    = DecodeFailed Value
+    | UnknownTopic String
 
 
 decodeBy : String -> Decoder Intent
@@ -19,11 +21,52 @@ decodeBy topic =
             Decode.succeed RootClick
 
         _ ->
-            Decode.succeed UnknownIntent
+            Decode.succeed (UnknownIntent (UnknownTopic topic))
+
+
+encode : Intent -> Value
+encode fact =
+    case fact of
+        RootClick ->
+            Encode.object
+                [ ( "topic", Encode.string "ROOT_CLICK" )
+                ]
+
+        UnknownIntent (DecodeFailed value) ->
+            Encode.object
+                [ ( "topic", Encode.string "system/DECODE_FAILED" )
+                , ( "meta"
+                  , Encode.object
+                        [ ( "kind", system )
+                        ]
+                  )
+                , ( "data", value )
+                ]
+
+        UnknownIntent (UnknownTopic topic) ->
+            Encode.object
+                [ ( "topic", Encode.string "system/UNKOWN_INTENT_RECEIVED" )
+                , ( "meta"
+                  , Encode.object
+                        [ ( "kind", system )
+                        ]
+                  )
+                , ( "data", Encode.string topic )
+                ]
 
 
 
 -- Helpers
+
+
+decodeString : String -> Intent
+decodeString json =
+    case Decode.decodeString Decode.value json of
+        Ok value ->
+            decode identity value
+
+        Err _ ->
+            UnknownIntent (DecodeFailed (Encode.object []))
 
 
 decoder : Decoder Intent
@@ -39,4 +82,9 @@ decode toMsg value =
             toMsg it
 
         Err _ ->
-            toMsg UnknownIntent
+            toMsg (UnknownIntent (DecodeFailed value))
+
+
+system : Value
+system =
+    Encode.string "system"
