@@ -6,8 +6,10 @@ if (!("Worker" in window)) {
     throw new Error("I need WebWorkers to be enabled!");
 }
 
-const worker = new Worker("/js/worker.js?id=x");
-console.log("worker", worker);
+const trace = (...args) => console.log("[shell]", ...args);
+
+const worker = new Worker("/js/worker.js?id=Core");
+trace("worker", worker);
 
 const pretty = (it) => JSON.stringify(it, null, "  ");
 
@@ -40,7 +42,7 @@ const dispose = store.subscribe((newState, msg, oldState) => {
 });
 
 const dispatch = (msg) => {
-    console.log("send: ", msg);
+    trace("send: ", msg);
     worker.postMessage(msg);
 };
 
@@ -52,9 +54,9 @@ const app = createApp({
 worker.addEventListener("message", (ev) => {
     // FIXME: ORIGIN CHECKS!!!
     const msg = ev.data;
-    console.log("recv: ", msg, ev);
+    trace("recv: ", msg, ev);
 
     store.dispatch(msg);
 });
 
-console.log("dist/app", app, store);
+trace("dist/app waiting for instructions", app, store);

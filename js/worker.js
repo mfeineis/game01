@@ -8,14 +8,22 @@
         flags.id = id;
     });
 
-    main(window, flags);
+    const whitelist = {
+        Core: true,
+    };
 
-}(self, (window, flags) => {
-    window.importScripts("/dist/core.js");
+    if (!whitelist.hasOwnProperty(flags.id)) {
+        throw new Error(`"${flags.id}" is not a known game system!`);
+    }
 
-    const trace = (...args) => console.log(...args);
+    main(window, flags, flags.id.toLowerCase());
 
-    const app = window.Elm.Game.Core.init({
+}(self, (window, flags, tag) => {
+    window.importScripts(`/dist/${tag}.js`);
+
+    const trace = (...args) => console.log(`[${tag}]`, ...args);
+
+    const app = window.Elm.Game[flags.id].init({
         flags,
     });
 
