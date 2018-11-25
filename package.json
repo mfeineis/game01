@@ -10,8 +10,9 @@
     "core:build": "elm make src/Game/Core.elm --output=dist/core.js",
     "format": "elm-format src tests",
     "start": "http-server -p 8080 .",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "rollup --config rollup.config.js --watch"
+    "test": "elm-test tests/**/*.elm",
+    "watch": "rollup --config rollup.config.js --watch",
+    "watch-tests": "elm-test tests/**/*.elm --watch"
   },
   "repository": {
     "type": "git",
