@@ -21,7 +21,7 @@ window.document.body.appendChild(pre);
 
 const store = createStore((msg = {}, state = {}) => {
     switch (msg.topic) {
-    case "GAME_INITIALIZED":
+    case "system/INITIALIZED":
         return {
             ...state,
             initialized: true,

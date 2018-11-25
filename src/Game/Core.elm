@@ -1,6 +1,8 @@
 module Game.Core exposing (main)
 
-import Game.Core.Ports as Ports exposing (Intent(..))
+import Game.Core.Facts as Facts exposing (Fact(..))
+import Game.Core.Intents as Intents exposing (Intent(..))
+import Game.Core.Ports as Ports
 import Json.Decode as Decode exposing (Value)
 
 
@@ -20,7 +22,7 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Ports.recv (Ports.decode Intent)
+    Ports.recv (Intents.decode Intent)
 
 
 type alias Model =
@@ -29,20 +31,33 @@ type alias Model =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( {}, Ports.gameInitialized flags )
+    ( {}, send SystemInitialized )
 
 
 type Msg
-    = Intent Intent
+    = Fact Fact
+    | Intent Intent
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log ("update " ++ Debug.toString msg) msg of
+    case Debug.log "update" msg of
+        Fact fact ->
+            ( {}, Cmd.none )
+
         Intent intent ->
             case intent of
                 RootClick ->
-                    ( {}, Ports.rootClicked )
+                    ( {}, send RootClicked )
 
-                Unknown ->
+                UnknownIntent ->
                     ( {}, Cmd.none )
+
+
+
+-- Helpers
+
+
+send : Fact -> Cmd Msg
+send fact =
+    Ports.send (Facts.encode fact)
